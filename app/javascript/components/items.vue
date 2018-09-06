@@ -5,9 +5,12 @@
         <input v-model="item.body">
         <button v-on:click="updateItem(item)">Update</button>
         <button v-on:click="deleteItem(item.id, index)">X</button>
+        <button v-on:click="upvoteItem(item)">Upvote</button>
+        {{ item.vote_count }}
+        <button v-on:click="downvoteItem(item)">Downvote</button>
       </li>
     </ul>
-    <input v-model="newItem" placeholder="add...">
+    <input v-model="newItem" placeholder="Add new item...">
     <button v-on:click="addItem">Add</button>
   </div>
 </template>
@@ -41,7 +44,11 @@ export default {
           headers: headers })
       .then((response) => response.json())
       .then((data) => {
-        vm.items.push({ id: data.id, body: data.body })
+        vm.items.push({
+          id: data.id,
+          body: data.body,
+          vote_count: data.vote_count
+        })
         vm.newItem = ''
       })
     },
@@ -56,6 +63,16 @@ export default {
         method: 'PUT',
         body: JSON.stringify({ body: item.body}),
         headers: headers })
+    },
+    upvoteItem: function (item) {
+      fetch(`/items/${item.id}/upvote`, { method: 'POST' })
+        .then((response) => response.json())
+        .then((data) => item.vote_count = data.vote_count)
+    },
+    downvoteItem: function (item) {
+      fetch(`/items/${item.id}/downvote`, { method: 'POST' })
+        .then((response) => response.json())
+        .then((data) => item.vote_count = data.vote_count)
     }
   }
 }

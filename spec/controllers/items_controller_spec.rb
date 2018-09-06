@@ -197,4 +197,66 @@ RSpec.describe ItemsController, type: :controller do
       end
     end
   end
+
+  describe '#upvote' do
+    subject { post(:upvote, params: { id: id }) }
+
+    context 'when item exists' do
+      let!(:item) { create(:item) }
+      let(:id) { item.id }
+
+      it 'increments item\'s vote count' do
+        expect { subject }.to change { item.reload.vote_count }.by(1)
+      end
+    end
+
+    context 'when item does not exist' do
+      let(:id) { 999 }
+
+      it 'returns 404' do
+        subject
+        expect(response.status).to eq(404)
+      end
+    end
+  end
+
+  describe '#downvote' do
+    subject { post(:downvote, params: { id: id }) }
+
+    context 'when item exists' do
+      let!(:item) { create(:item, vote_count: vote_count) }
+      let(:id) { item.id }
+
+      context 'when item\'s vote count is above 0' do
+        let(:vote_count) { 5 }
+
+        it 'decrements item\'s vote count' do
+          expect { subject }.to change { item.reload.vote_count }.by(-1)
+        end
+
+        it 'returns 200' do
+          subject
+          expect(response.status).to eq(200)
+        end
+      end
+
+      context 'when item\'s vote count is 0' do
+        let(:vote_count) { 0 }
+
+        it 'leaves vote count at 0' do
+          subject
+          expect(item.reload.vote_count).to eq(0)
+        end
+      end
+    end
+
+    context 'when item does not exist' do
+      let(:id) { 999 }
+
+      it 'returns 404' do
+        subject
+        expect(response.status).to eq(404)
+      end
+    end
+  end
 end

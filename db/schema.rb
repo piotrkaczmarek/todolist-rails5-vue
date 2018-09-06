@@ -10,12 +10,13 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_09_05_183505) do
+ActiveRecord::Schema.define(version: 2018_09_06_144545) do
 
   create_table "items", force: :cascade do |t|
     t.string "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "vote_count", default: 0
   end
 
 end

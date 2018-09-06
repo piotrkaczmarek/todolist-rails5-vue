@@ -27,6 +27,24 @@ class ItemsController < ApplicationController
     end
   end
 
+  def upvote
+    item = Item.find(params[:id])
+    if item.upvote
+      render json: item
+    else
+      render json: { errors: item.errors }, status: :bad_request
+    end
+  end
+
+  def downvote
+    item = Item.find(params[:id])
+    if item.downvote
+      render json: item
+    else
+      render json: { errors: item.errors }, status: :bad_request
+    end
+  end
+
   private
 
   def permitted_params
