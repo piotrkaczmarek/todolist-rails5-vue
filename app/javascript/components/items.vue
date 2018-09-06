@@ -2,7 +2,7 @@
   <div>
     <ul>
       <li v-for="(item, index) in items" :key="index">
-        {{ item }}
+        {{ item.body }}
       </li>
     </ul>
     <input v-model="newItem" placeholder="add...">
@@ -19,10 +19,27 @@ export default {
       items: []
     }
   },
+
+  created: function() {
+    fetch('/items')
+      .then((response) => response.json())
+      .then((data) => this.items = data)
+  },
+
   methods: {
     add: function () {
       let vm = this;
-      vm.items.push(vm.newItem)
+      vm.items.push({ body: vm.newItem })
+      fetch('/items',
+        {
+          method: 'POST',
+          body: JSON.stringify({ body: vm.newItem }),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          }
+        }
+      )
       vm.newItem = ''
     }
   }
