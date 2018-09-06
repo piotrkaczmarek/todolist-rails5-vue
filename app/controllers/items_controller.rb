@@ -4,11 +4,32 @@ class ItemsController < ApplicationController
   end
 
   def create
-    item = Item.create(body: params[:body])
+    item = Item.create(permitted_params)
     if item.valid?
-      head(:ok)
+      render json: item
     else
-      render json: { errors: item.errors }, status: :unprocessable_entity
+      render json: { errors: item.errors }, status: :bad_request
     end
+  end
+
+  def destroy
+    item = Item.find(params[:id])
+    item.destroy
+    head :ok
+  end
+
+  def update
+    item = Item.find(params[:id])
+    if item.update(permitted_params)
+      render json: item
+    else
+      render json: { errors: item.errors }, status: :bad_request
+    end
+  end
+
+  private
+
+  def permitted_params
+    params.permit(:body)
   end
 end
