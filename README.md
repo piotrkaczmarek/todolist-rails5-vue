@@ -17,13 +17,13 @@ rails db:create
 rails db:migrate
 ````
 
-## Running
+## Running App
 ````
 foreman start
 ````
 Visit `http://localhost:3000/`
 
-## Tests
+## Running Tests
 ````
 rspec
 ````
